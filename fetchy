@@ -19,13 +19,9 @@ main() {
 }
 
 # colorsise input
-c() {
-    printf "\033[%sm%s\033[0m" "$1" "$2"  # see above for usage
-}
+c() { printf "\033[%sm%s\033[0m" "$1" "$2"; }
 
-title() {
-    title="${USER:-$(id -un)}@$(hostname)"
-}
+title() { title="${USER:-$(id -un)}@$(hostname)"; }
 
 distro() {
     # distribution name
@@ -48,13 +44,9 @@ wm() {
         tr '[:upper:]' '[:lower:]')
 }
 
-kernel () {
-    read -r _ _ kernel _ < /proc/version
-}
+kernel () { read -r _ _ kernel _ < /proc/version; }
 
-shell() {
-    shell=${SHELL##*/}
-}
+shell() { shell=${SHELL##*/}; }
 
 uptime() {
     read -r u _ </proc/uptime
