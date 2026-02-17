@@ -3,9 +3,8 @@
 # Requires nerdfont to display icons
 
 # Colors
-colorise() { 
-    color="\033[31m" # red
-    printf "%b" "${color}${1}\033[0m"
+c() {
+    printf "\033[%sm%s\033[0m" "$1" "$2"
 }
 
 # Title
@@ -97,8 +96,8 @@ colors() {
 
 # Output
 printf "%b\n" "               $title
-               $(colorise )  $os ${wmname:+- $wmname}
-   (\\\ /)       $(colorise )  $kernel
-   ( . .)      $(colorise )  $shell
-   c(\")(\")     $(colorise 󰏖)  $disk
-               $(colorise 󰏘)  $palette"
+  $(c 34 '⠀⠀⠀⠀⠀⠀⢀⣴⣾⠆')   $(c 35 )  $os ${wmname:+- $wmname}
+  $(c 34 '⢶⣶⡶⡴⢦⣼⣟⣻⣿⠀')   $(c 35 )  $kernel
+  $(c 34 '⠀⠙⣿⡳⣋⡿⣦⡲⣺')    $(c 35 )  $shell
+  $(c 34 '⠀⠀⠸⣼⣸⠟⠀⠛⠃')    $(c 35 󰏖)  $disk
+               $(c 35 󰏘)  $palette"
