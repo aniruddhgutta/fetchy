@@ -2,20 +2,37 @@
 # Tiny POSIX compliant fetch script
 # Requires nerdfont to display icons
 
-# Colors
-c() {
-    printf "\033[%sm%s\033[0m" "$1" "$2"
+# customise what to display here
+main() {
+    # call all functions
+    for func in title distro wm kernel shell memory uptime disk colors; do
+        $func
+    done
+
+    # display information
+    printf "%b\n" "               $title
+  $(c 34 '⠀⠀⠀⠀⠀⠀⢀⣴⣾⠆')   $(c 35 )  $os ${wmname:+- $wmname}
+  $(c 34 '⢶⣶⡶⡴⢦⣼⣟⣻⣿⠀')   $(c 35 )  $kernel
+  $(c 34 '⠀⠙⣿⡳⣋⡿⣦⡲⣺')    $(c 35 )  $shell
+  $(c 34 '⠀⠀⠸⣼⣸⠟⠀⠛⠃')    $(c 35 󰏖)  $disk
+               $(c 35 󰏘)  $palette"
 }
 
-# Title
+# colorsise input
+c() {
+    printf "\033[%sm%s\033[0m" "$1" "$2"  # see above for usage
+}
+
 title() {
     title="${USER:-$(id -un)}@$(hostname)"
 }
 
-# Distribution and package count
 distro() {
+    # distribution name
     [ -f /etc/os-release ] && . /etc/os-release
     os="$(printf "%s" "${PRETTY_NAME:-Linux}" | tr '[:upper:]' '[:lower:]')"
+
+    # package count (add yours if not present)
     case "$os" in
         *void*) pkg="$(xbps-query -l | wc -l) (xbps)" ;;
         *kiss*) pkg="$(ls /var/db/kiss/installed | wc -l) (kiss)" ;;
@@ -23,23 +40,19 @@ distro() {
     esac
 }
 
-# Window manager
 wm() {
     wmname=$(printf "%s" "${XDG_CURRENT_DESKTOP:-unknown}" | 
         tr '[:upper:]' '[:lower:]')
 }
 
-# Kernel
 kernel () {
     read -r _ _ kernel _ < /proc/version
 }
 
-# Shell
 shell() {
     shell=${SHELL##*/}
 }
 
-# Uptime
 uptime() {
     u=$(cut -d' ' -f1 /proc/uptime); u=${u%.*}
     d=$(( u/86400)); h=$((u/3600%24)); m=$((u/60%60))
@@ -48,7 +61,6 @@ uptime() {
     uptime="${uptime}${m}m"
 }
 
-# Memory
 memory() {
     u=0; t=0
     while IFS=: read -r a b; do
@@ -63,7 +75,6 @@ memory() {
     memory="${u}MiB / ${t}MiB"
 }
 
-# Storage
 disk() {
     disk=$(df -k "${disk_show:-/}" | awk 'NR==2{
         used=$3/1048576
@@ -73,7 +84,6 @@ disk() {
     }')
 }
 
-# Colors
 colors() {
     i=0
     while [ "$i" -lt 8 ]; do
@@ -82,22 +92,5 @@ colors() {
     done
 }
 
-{
-    title
-    wm
-    distro # 
-    kernel #  󰏖
-    shell # 
-    uptime # 
-    memory # 
-    disk # 󰋊
-    colors # 󰏘
-} >/dev/null
-
-# Output
-printf "%b\n" "               $title
-  $(c 34 '⠀⠀⠀⠀⠀⠀⢀⣴⣾⠆')   $(c 35 )  $os ${wmname:+- $wmname}
-  $(c 34 '⢶⣶⡶⡴⢦⣼⣟⣻⣿⠀')   $(c 35 )  $kernel
-  $(c 34 '⠀⠙⣿⡳⣋⡿⣦⡲⣺')    $(c 35 )  $shell
-  $(c 34 '⠀⠀⠸⣼⣸⠟⠀⠛⠃')    $(c 35 󰏖)  $disk
-               $(c 35 󰏘)  $palette"
+# fetch away!
+main
