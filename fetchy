@@ -1,13 +1,13 @@
 #!/bin/sh
-# Tiny POSIX compliant fetch script
+# Tiny POSIX compliant fetch script (linux-only)
 # Requires nerdfont to display icons
 
 # customise what to display here
 main() {
-    # call all functions
-    for func in title distro wm kernel shell memory uptime disk colors; do
-        $func
-    done
+    # call functions
+    PKG_COUNT=0  # set to 1 to show package count
+    func_list="title distro wm kernel shell memory uptime disk colors"
+    for func in $func_list; do $func; done
 
     # display information
     printf "%b\n" "               $title
@@ -33,12 +33,14 @@ distro() {
     os="$(printf "%s" "${PRETTY_NAME:-Linux}" | tr '[:upper:]' '[:lower:]')"
 
     # package count (add yours if not present)
-    case "$os" in
-        *void*) pkg="$(xbps-query -l | wc -l) (xbps)" ;;
-        *kiss*) pkg="$(ls /var/db/kiss/installed | wc -l) (kiss)" ;;
-        *alpine*|*chimera*) pkg="$(apk list --installed | wc -l) (apk)" ;;
-        *) pkg="0 (unknown)" ;;
-    esac
+    [ "$PKG_COUNT" = 1 ] && {
+        case "$os" in
+            *void*) pkg="$(xbps-query -l | wc -l) (xbps)" ;;
+            *kiss*) pkg="$(ls /var/db/kiss/installed | wc -l) (kiss)" ;;
+            *alpine*|*chimera*) pkg="$(apk list --installed | wc -l) (apk)" ;;
+            *) pkg="0 (unknown)" ;;
+        esac
+    }
 }
 
 wm() {
@@ -55,25 +57,25 @@ shell() {
 }
 
 uptime() {
-    u=$(cut -d' ' -f1 /proc/uptime); u=${u%.*}
-    d=$(( u/86400)); h=$((u/3600%24)); m=$((u/60%60))
+    read -r u _ </proc/uptime
+    u=${u%.*}
+    d=$((u/86400)); h=$((u/3600%24)); m=$((u/60%60))
     [ "$d" -ge 1 ] && uptime="${d}d "
     [ "$h" -ge 1 ] && uptime="${uptime}${h}h "
     uptime="${uptime}${m}m"
 }
 
 memory() {
-    u=0; t=0
-    while IFS=: read -r a b; do
-        b=${b% kB}
-        case $a in
-            MemTotal) t=$b; u=$b ;;
-            Shmem) u=$((u + b)) ;;
-            MemFree|Buffers|Cached|SReclaimable) u=$((u - b)) ;;
-        esac
-    done </proc/meminfo
-    u=$((u / 1024)); t=$((t / 1024))
-    memory="${u}MiB / ${t}MiB"
+    memory=$(awk '
+        /^MemTotal:/ {t=$2; u=$2}
+        /^Shmem:/ {u+=$2}
+        /^MemFree:|^Buffers:|^Cached:|^SReclaimable:/ {u-=$2}
+        END {
+            u/=1024; t/=1024
+            if(t>=1024) printf "%.2f GiB / %.2f GiB",u/1024,t/1024
+            else printf "%.0f MiB / %.0f MiB",u,t
+        }
+    ' /proc/meminfo)
 }
 
 disk() {
@@ -86,11 +88,10 @@ disk() {
 }
 
 colors() {
-    i=0
-    while [ "$i" -lt 8 ]; do
-        palette="${palette}\033[48;5;${i}m   \033[0m"
-        i=$((i+1))
-    done
+    palette="\033[48;5;0m   \033[0m\033[48;5;1m   \033[0m"
+    palette="$palette\033[48;5;2m   \033[0m\033[48;5;3m   \033[0m"
+    palette="$palette\033[48;5;4m   \033[0m\033[48;5;5m   \033[0m"
+    palette="$palette\033[48;5;6m   \033[0m\033[48;5;7m   \033[0m"
 }
 
 # fetch away!
