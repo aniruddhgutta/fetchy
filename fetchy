@@ -6,7 +6,7 @@
 main() {
     # call functions
     PKG_COUNT=0  # set to 1 to show package count
-    func_list="title distro wm kernel shell memory uptime disk colors"
+    func_list="title distro wm kernel shell disk colors" # uptime , memory 
     for func in $func_list; do $func; done
 
     # display information
@@ -71,11 +71,8 @@ memory() {
 }
 
 disk() {
-    disk=$(df -k "${disk_show:-/}" | awk 'NR==2{
-        used=$3/1048576
-        total=$2/1048576
-        perc=int($3*100/$2)
-        printf "%.2f GiB / %.2f GiB (%d%%)", used, total, perc
+    disk=$(df -k / | awk 'NR==2{
+        printf "%.2f GiB / %.2f GiB (%d%%)", $3/1048576, $2/1048576, $3*100/$2
     }')
 }
 
