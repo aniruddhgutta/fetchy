@@ -36,6 +36,7 @@ distro() {
     case "$os" in
         *void*) pkg="$(xbps-query -l | wc -l) (xbps)" ;;
         *kiss*) pkg="$(ls /var/db/kiss/installed | wc -l) (kiss)" ;;
+        *alpine*|*chimera*) pkg="$(apk list --installed | wc -l) (apk)" ;;
         *) pkg="0 (unknown)" ;;
     esac
 }
