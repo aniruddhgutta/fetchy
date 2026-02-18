@@ -64,7 +64,7 @@ memory() {
         /^MemFree:|^Buffers:|^Cached:|^SReclaimable:/ {u-=$2}
         END {
             u/=1024; t/=1024
-            if(t>=1024) printf "%.2f GiB / %.2f GiB",u/1024,t/1024
+            if(u>=1024) printf "%.2f GiB / %.2f GiB",u/1024,t/1024
             else printf "%.0f MiB / %.0f MiB",u,t
         }
     ' /proc/meminfo)
