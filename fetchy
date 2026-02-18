@@ -25,8 +25,7 @@ title() { title="${USER:-$(id -un)}@$(hostname)"; }
 
 distro() {
     # distribution name
-    [ -f /etc/os-release ] && . /etc/os-release
-    os="$(printf "%s" "${PRETTY_NAME:-Linux}" | tr '[:upper:]' '[:lower:]')"
+    os="$(printf "%s" "$(uname -s)" | tr '[:upper:]' '[:lower:]')"
 
     # package count (add yours if not present)
     [ "$PKG_COUNT" = 1 ] && {
@@ -44,12 +43,12 @@ wm() {
         tr '[:upper:]' '[:lower:]')
 }
 
-kernel () { read -r _ _ kernel _ < /proc/version; }
+kernel () { kernel="$(uname -r)"; }
 
 shell() { shell=${SHELL##*/}; }
 
 uptime() {
-    read -r u _ </proc/uptime
+    u="$(sysctl -n kern.boottime | awk '{print systime() - $4}')"
     u=${u%.*}
     d=$((u/86400)); h=$((u/3600%24)); m=$((u/60%60))
     [ "$d" -ge 1 ] && uptime="${d}d "

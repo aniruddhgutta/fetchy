@@ -1,6 +1,6 @@
 # fetchy
 
-**fetchy** is a tiny posix compliant (linux-only) system fetch script. It sacrifices portability for speed, though modifying it to be portable isn't too hard.
+**fetchy** is a tiny posix compliant system fetch script. The portable version patches the following functions - `uptime`, `distro` and `kernel`
 ![](./preview.webp)
 
 ---
