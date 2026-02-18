@@ -6,7 +6,7 @@
 main() {
     # call functions
     PKG_COUNT=0  # set to 1 to show package count
-    func_list="title distro wm kernel shell disk colors" # uptime , memory 
+    func_list="title distro wm kernel shell memory colors" # uptime , disk 󰏖
     for func in $func_list; do $func; done
 
     # display information
@@ -14,7 +14,7 @@ main() {
   $(c 34 '⠀⠀⠀⠀⠀⠀⢀⣴⣾⠆')   $(c 35 )  $os ${wmname:+- $wmname}
   $(c 34 '⢶⣶⡶⡴⢦⣼⣟⣻⣿⠀')   $(c 35 )  $kernel
   $(c 34 '⠀⠙⣿⡳⣋⡿⣦⡲⣺')    $(c 35 )  $shell
-  $(c 34 '⠀⠀⠸⣼⣸⠟⠀⠛⠃')    $(c 35 󰏖)  $disk
+  $(c 34 '⠀⠀⠸⣼⣸⠟⠀⠛⠃')    $(c 35 )  $memory
                $(c 35 󰏘)  $palette"
 }
 
