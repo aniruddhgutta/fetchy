@@ -21,7 +21,7 @@ main() {
 # colorsise input
 c() { printf "\033[%sm%s\033[0m" "$1" "$2"; }
 
-title() { title="${USER:-$(id -un)}@$(hostname)"; }
+title() { title="${USER:-$(id -un)}@$(uname -n)"; }
 
 distro() {
     # distribution name
